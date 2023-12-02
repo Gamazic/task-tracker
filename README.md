@@ -14,14 +14,13 @@ and Clean Architecture techniques.
 * **Clean Architecture**. The architecture prioritizes encapsulating business logic and domain concerns.
 Specific implementations of database/web/events/logging/other are not emphasized.
 * **High Performance**. Designed with a focus on delivering efficient performance and low latency.
+* **Minimal dependencies**. Using Go's rich standard library and idiomatic problem-solving
+  approaches to minimize external dependencies. The project maximizes Go's capabilities.
 * **Minimal amount of database requests**. Aiming for optimal performance by
 minimizing the number of database requests. Some Domain-Driven Design (DDD) or Clean Architecture (CA)
 applications suffer from IO performance issues due to excessive querying or
 complex domain object reconstruction. This project seeks to strike a balance
 that is easily comprehensible for humans while being less IO bound.
-* **Minimal dependencies**. Leveraging Go's rich standard library and idiomatic problem-solving
-approaches to minimize external dependencies.
-The project maximizes the utilization of Go's inherent capabilities.
 
 ## Documentation
 
@@ -61,6 +60,12 @@ curl -X PATCH 'localhost:8080/api/task/1' -d '{"stage": "done"}' -H 'Username: M
 curl -X GET 'localhost:8080/api/task' -H 'Username: MyUsername'
 ```
 `[{"task_id":1,"description":"code","stage":"todo"}]`
+
+
+### Inspired by
+
+* https://github.com/Tishka17/deseos17
+* https://github.com/SamWarden/user_service
 
 ___
 
