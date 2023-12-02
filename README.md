@@ -62,5 +62,6 @@ curl -X GET 'localhost:8080/api/task' -H 'Username: MyUsername'
 ```
 `[{"task_id":1,"description":"code","stage":"todo"}]`
 
+___
 
 Still in progress.
