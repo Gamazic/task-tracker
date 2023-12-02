@@ -23,5 +23,44 @@ that is easily comprehensible for humans while being less IO bound.
 approaches to minimize external dependencies.
 The project maximizes the utilization of Go's inherent capabilities.
 
+## Documentation
+
+### Run
+
+```go
+go run ./src/presentation/rest/main
+```
+
+### HTTP Api
+
+#### Create user
+
+```shell
+curl -X POST 'localhost:8080/api/user' -d '{"username": "MyUsername"}'
+```
+`{"username":"MyUsername"}`
+
+#### Create task
+
+```shell
+curl -X POST 'localhost:8080/api/task/' -d '{"description": "code"}' -H 'Username: MyUsername'
+```
+`{"task_id":1,"description":"code","stage":"todo"}`
+
+
+#### Change task stage
+
+```shell
+curl -X PATCH 'localhost:8080/api/task/1' -d '{"stage": "done"}' -H 'Username: MyUsername'
+```
+`{"task_id":1}`
+
+#### Get tasks of user
+
+```shell
+curl -X GET 'localhost:8080/api/task' -H 'Username: MyUsername'
+```
+`[{"task_id":1,"description":"code","stage":"todo"}]`
+
 
 Still in progress.
