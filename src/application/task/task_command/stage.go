@@ -3,7 +3,6 @@ package task_command
 import (
 	"errors"
 	"fmt"
-	"tracker_backend/src/application"
 	"tracker_backend/src/domain"
 )
 
@@ -34,19 +33,19 @@ func NewChangeTaskStageCmd(
 	}
 }
 
-func (c ChangeTaskStageCmd) Execute(taskDto TaskInStageChange) (application.EmptyOutputType, error) {
+func (c ChangeTaskStageCmd) Execute(taskDto TaskInStageChange) error {
 	taskId := domain.TaskId(taskDto.TaskId)
 	targetStage, err := domain.NewStage(taskDto.TargetStage)
 	if err != nil {
-		return application.EmptyOutput, err
+		return err
 	}
 	requireOwnership := c.permService.UserRoleToTask(c.requesterRoles)
 	err = c.stageChanger.ChangeStage(taskId, targetStage, requireOwnership)
 	if errors.Is(err, domain.ErrOpNotAllowed) {
-		return application.EmptyOutput, err
+		return err
 	}
 	if err != nil {
-		return application.EmptyOutput, fmt.Errorf("%w: %s", ErrChangeTaskStage, err)
+		return fmt.Errorf("%w: %s", ErrChangeTaskStage, err)
 	}
-	return application.EmptyOutput, nil
+	return nil
 }

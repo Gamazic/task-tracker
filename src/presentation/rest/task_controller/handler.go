@@ -150,7 +150,7 @@ func (t TaskHandler) Patch(w http.ResponseWriter, r *http.Request, taskId int) {
 		TaskId:      taskId,
 		TargetStage: body.Stage,
 	}
-	_, err = changeStageUsecase.Execute(task)
+	err = changeStageUsecase.Execute(task)
 	if errors.Is(err, domain.ErrInvalidStage) {
 		microframework.SendValidationError(w, err)
 		return

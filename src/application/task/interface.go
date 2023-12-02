@@ -1,7 +1,6 @@
 package task
 
 import (
-	"tracker_backend/src/application"
 	"tracker_backend/src/application/task/task_command"
 	"tracker_backend/src/application/task/task_query"
 )
@@ -11,7 +10,7 @@ type TaskCreator interface {
 }
 
 type TaskStageChanger interface {
-	Execute(change task_command.TaskInStageChange) (application.EmptyOutputType, error)
+	Execute(change task_command.TaskInStageChange) error
 }
 
 type TaskQuerier interface {
