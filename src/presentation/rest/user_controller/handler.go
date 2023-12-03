@@ -41,7 +41,7 @@ func (u UserHandler) Post(w http.ResponseWriter, r *http.Request) {
 	if errors.Is(err, userUsecase.ErrUserAlreadyExist) {
 		u.Logger.LogIfErr(microframework.NewResponseBuilder(w).
 			BuildStatus(http.StatusBadRequest).
-			BuildBody(UserResponseModel{Username: user.Username}).
+			BuildBodyNestedMsg("user already exist").
 			Send())
 		return
 	}
