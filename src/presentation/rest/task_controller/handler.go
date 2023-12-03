@@ -2,6 +2,7 @@ package task_controller
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"tracker_backend/src/application"
 	"tracker_backend/src/application/task/task_command"
@@ -126,7 +127,7 @@ func (t TaskHandler) Patch(w http.ResponseWriter, r *http.Request, taskId int) {
 	}
 	if err != nil {
 		t.Logger.Errorf("task post parsing: %s", err)
-		microframework.SendValidationError(w, errors.New("bad body"))
+		microframework.SendValidationError(w, fmt.Errorf("bad body"))
 		return
 	}
 	username := r.Header.Get(usernameHeaderKey)

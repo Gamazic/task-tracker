@@ -49,6 +49,14 @@ func (t Task) GetStage() Stage {
 	return t.stage
 }
 
+func (t Task) GetDescription() Description {
+	return t.description
+}
+
+func (t Task) GetOwnerUsername() Username {
+	return t.ownerUsername
+}
+
 var ErrInvalidTaskId = errors.New("invalid task id")
 
 type TaskId int
