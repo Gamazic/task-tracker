@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"tracker_backend/src/factory"
 	"tracker_backend/src/factory/task"
 	"tracker_backend/src/factory/user"
 	"tracker_backend/src/infrastructure"
@@ -17,26 +18,28 @@ const bodyMaxBytes = 1024
 func main() {
 	logger := infrastructure.PrintLogger{}
 
-	userSaverFactory := user.UserSaverFactory{}
+	inmemoryDbFactory := factory.InMemoryFactory{}
+
+	userSaverFactory := factory.UserSaverWrapper{InMemoryFactory: &inmemoryDbFactory}
 	createUserFactory := user.CreateUserFactory{
-		SaverFactory: userSaverFactory,
+		SaverFactory: &userSaverFactory,
 	}
 	userHandler := user_controller.UserHandler{
 		CreateUserFactory: createUserFactory,
 		Logger:            logger,
 	}
 
-	taskSaverFactory := task.TaskSaverFactory{}
+	taskSaverFactory := factory.TaskSaverWrapper{InMemoryFactory: &inmemoryDbFactory}
 	createTaskFactory := task.CreateFactory{
 		SaverFactory: taskSaverFactory,
 	}
 
-	stageChangerFactory := task.StageChangerFactory{}
+	stageChangerFactory := factory.StageChangerWrapper{InMemoryFactory: &inmemoryDbFactory}
 	changeStageFactory := task.ChangeStageFactory{
 		StageChangerFactory: stageChangerFactory,
 	}
 
-	taskDbGatewayFactory := task.DbQueryGatewayFactory{}
+	taskDbGatewayFactory := factory.DbQueryGatewayWrapper{InMemoryFactory: &inmemoryDbFactory}
 	getOwnerTasksFactory := task.GetOwnerTasksFactory{
 		DbGatewayFactory: taskDbGatewayFactory,
 	}

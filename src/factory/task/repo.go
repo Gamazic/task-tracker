@@ -15,9 +15,9 @@ type AbsTaskSaverFactory interface {
 	Build(TaskSaverDeps) (task_command.TaskSaver, error)
 }
 
-type TaskSaverFactory struct{}
+type TaskSaverStubFactory struct{}
 
-func (t TaskSaverFactory) Build(deps TaskSaverDeps) (task_command.TaskSaver, error) {
+func (t TaskSaverStubFactory) Build(deps TaskSaverDeps) (task_command.TaskSaver, error) {
 	return taskAdapter.TaskDbGatewayStub{}, nil
 }
 
@@ -29,9 +29,9 @@ type AbsStageChangerFactory interface {
 	Build(StageChangerDeps) (task_command.TaskStageChanger, error)
 }
 
-type StageChangerFactory struct{}
+type StageChangerStubFactory struct{}
 
-func (t StageChangerFactory) Build(deps StageChangerDeps) (task_command.TaskStageChanger, error) {
+func (t StageChangerStubFactory) Build(deps StageChangerDeps) (task_command.TaskStageChanger, error) {
 	return taskAdapter.TaskDbGatewayStub{}, nil
 }
 
@@ -43,8 +43,8 @@ type AbsDbQueryGatewayFactory interface {
 	Build(DbQueryGatewayDeps) (task_query.DbQueryGateway, error)
 }
 
-type DbQueryGatewayFactory struct{}
+type DbQueryGatewayStubFactory struct{}
 
-func (d DbQueryGatewayFactory) Build(DbQueryGatewayDeps) (task_query.DbQueryGateway, error) {
+func (d DbQueryGatewayStubFactory) Build(DbQueryGatewayDeps) (task_query.DbQueryGateway, error) {
 	return taskAdapter.TaskDbGatewayStub{}, nil
 }

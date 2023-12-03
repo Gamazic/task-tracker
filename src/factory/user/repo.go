@@ -14,8 +14,8 @@ type AbsUserSaverFactory interface {
 	Build(UserSaverDeps) (user.UserSaver, error)
 }
 
-type UserSaverFactory struct{}
+type UserSaverStubFactory struct{}
 
-func (u UserSaverFactory) Build(UserSaverDeps) (user.UserSaver, error) {
+func (u UserSaverStubFactory) Build(UserSaverDeps) (user.UserSaver, error) {
 	return userAdapter.UserSaverStub{}, nil
 }

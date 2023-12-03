@@ -26,3 +26,7 @@ func NewUser(username string) (User, error) {
 		name: usernameDomain,
 	}, nil
 }
+
+func (u User) GetUsername() Username {
+	return u.name
+}
