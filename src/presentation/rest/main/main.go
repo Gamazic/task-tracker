@@ -54,9 +54,10 @@ func main() {
 	apiHandler := rest.MainHandler{
 		UserHandler: userHandler,
 		TaskHandler: taskHandler,
+		SwaggerDir:  "./swagger",
 	}
 
 	mwHandler := microframework.Logging(apiHandler, logger)
 	mwHandler = microframework.MaxBytes(mwHandler, bodyMaxBytes)
-	log.Fatal(http.ListenAndServe(":8080", mwHandler))
+	log.Fatal(http.ListenAndServe("0.0.0.0:8080", mwHandler))
 }

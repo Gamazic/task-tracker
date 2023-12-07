@@ -42,7 +42,7 @@ curl -X POST 'localhost:8080/api/user' -d '{"username": "MyUsername"}'
 #### Create task
 
 ```shell
-curl -X POST 'localhost:8080/api/task/' -d '{"description": "code"}' -H 'Username: MyUsername'
+curl -X POST 'localhost:8080/api/task' -d '{"description": "code"}' -H 'Username: MyUsername'
 ```
 `{"task_id":1,"description":"code","stage":"todo"}`
 
