@@ -44,6 +44,9 @@ func (c ChangeTaskStageCmd) Execute(taskDto TaskInStageChange) error {
 	if errors.Is(err, domain.ErrOpNotAllowed) {
 		return err
 	}
+	if errors.Is(err, ErrTaskNotFound) {
+		return err
+	}
 	if err != nil {
 		return fmt.Errorf("%w: %s", ErrChangeTaskStage, err)
 	}

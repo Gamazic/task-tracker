@@ -22,6 +22,9 @@ type TaskHandler struct {
 
 func (t TaskHandler) GetCollection(w http.ResponseWriter, r *http.Request) {
 	username := r.Header.Get(usernameHeaderKey)
+	limit := ParseIntWithDefault(r.URL.Query().Get("limit"), 0)
+	offset := ParseIntWithDefault(r.URL.Query().Get("offset"), 0)
+
 	err := UsernameHeader(username).Validate()
 	if err != nil {
 		microframework.SendValidationError(w, err)
@@ -40,7 +43,10 @@ func (t TaskHandler) GetCollection(w http.ResponseWriter, r *http.Request) {
 	}
 	queryParams := task_query.OwnerTasksQuery{
 		OwnerUsername: username,
-		Pagination:    application.Pagination{},
+		Pagination: application.Pagination{
+			Limit:  limit,
+			Offset: offset,
+		},
 	}
 	tasks, err := getOwnerTasksUsecase.Execute(queryParams)
 	if errors.Is(err, domain.ErrInvalidUsername) {
@@ -158,6 +164,10 @@ func (t TaskHandler) Patch(w http.ResponseWriter, r *http.Request, taskId int) {
 	}
 	if errors.Is(err, domain.ErrOpNotAllowed) {
 		microframework.SendForbidden(w)
+		return
+	}
+	if errors.Is(err, task_command.ErrTaskNotFound) {
+		http.NotFound(w, r)
 		return
 	}
 	if err != nil {

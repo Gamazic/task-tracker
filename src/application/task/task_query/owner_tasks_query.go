@@ -33,6 +33,8 @@ type GetOwnerTasks struct {
 	db             DbQueryGateway
 }
 
+const paginationLimit = 20
+
 func NewGetOwnerTasks(
 	requesterRoles domain.UserRoleParams,
 	db DbQueryGateway,
@@ -45,6 +47,12 @@ func NewGetOwnerTasks(
 }
 
 func (g GetOwnerTasks) Execute(query OwnerTasksQuery) (OwnerTasksResult, error) {
+	if query.Pagination.Limit > paginationLimit || query.Pagination.Limit < 0 {
+		query.Pagination.Limit = paginationLimit
+	}
+	if query.Pagination.Offset < 0 {
+		query.Pagination.Offset = 0
+	}
 	tasksOwnership := domain.TaskOwnershipParams{
 		TaskOwnerUsername: domain.Username(query.OwnerUsername),
 	}

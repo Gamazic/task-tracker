@@ -2,6 +2,7 @@ package inmemory
 
 import (
 	"sync"
+	"tracker_backend/src/application/task/task_command"
 	"tracker_backend/src/application/task/task_query"
 	userUsecase "tracker_backend/src/application/user"
 	"tracker_backend/src/domain"
@@ -52,6 +53,9 @@ func (d *Db) ChangeStage(taskId domain.TaskId, stage domain.Stage,
 	d.rwLock.Lock()
 	defer d.rwLock.Unlock()
 
+	if int(taskId) >= len(d.tasks) {
+		return task_command.ErrTaskNotFound
+	}
 	task := &d.tasks[int(taskId)]
 	if task.Username != string(ensureTaskOwnership.TaskOwnerUsername) {
 		return domain.ErrOpNotAllowed
@@ -83,12 +87,12 @@ func (d *Db) fetchStoreOwnerTasks(username string,
 		return []taskInDb{}
 	}
 
-	offset = min(offset, len(taskIds)-1)
-	if limit != 0 {
+	offset = min(offset, len(taskIds))
+	if limit != 0 && offset != 0 {
 		limit = offset + limit
 		limit = min(len(taskIds), limit)
 		taskIds = taskIds[offset:limit]
-	} else {
+	} else if offset != 0 {
 		taskIds = taskIds[offset:]
 	}
 

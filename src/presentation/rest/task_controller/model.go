@@ -2,6 +2,7 @@ package task_controller
 
 import (
 	"fmt"
+	"strconv"
 	"tracker_backend/src/presentation/rest/microframework"
 )
 
@@ -65,4 +66,15 @@ type TaskModel struct {
 	TaskId      int    `json:"task_id"`
 	Description string `json:"description"`
 	Stage       string `json:"stage"`
+}
+
+func ParseIntWithDefault(s string, d int) int {
+	if s == "" {
+		return d
+	}
+	res, err := strconv.Atoi(s)
+	if err != nil {
+		return d
+	}
+	return res
 }
