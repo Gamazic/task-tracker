@@ -4,10 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"tracker_backend/src/application"
-	"tracker_backend/src/application/task/task_command"
-	"tracker_backend/src/application/task/task_query"
-	"tracker_backend/src/domain"
+	taskUsecase "tracker_backend/src/application/task"
+	permissionDomain "tracker_backend/src/domain/permission"
+	"tracker_backend/src/domain/task"
+	userDomain "tracker_backend/src/domain/user"
+	"tracker_backend/src/factory"
 	taskFactory "tracker_backend/src/factory/task"
 	"tracker_backend/src/infrastructure"
 	"tracker_backend/src/presentation/rest/microframework"
@@ -22,9 +23,6 @@ type TaskHandler struct {
 
 func (t TaskHandler) GetCollection(w http.ResponseWriter, r *http.Request) {
 	username := r.Header.Get(usernameHeaderKey)
-	limit := ParseIntWithDefault(r.URL.Query().Get("limit"), 0)
-	offset := ParseIntWithDefault(r.URL.Query().Get("offset"), 0)
-
 	err := UsernameHeader(username).Validate()
 	if err != nil {
 		microframework.SendValidationError(w, err)
@@ -41,19 +39,15 @@ func (t TaskHandler) GetCollection(w http.ResponseWriter, r *http.Request) {
 		microframework.SendInternalServerError(w)
 		return
 	}
-	queryParams := task_query.OwnerTasksQuery{
+	queryParams := taskUsecase.OwnerTasksQuery{
 		OwnerUsername: username,
-		Pagination: application.Pagination{
-			Limit:  limit,
-			Offset: offset,
-		},
 	}
 	tasks, err := getOwnerTasksUsecase.Execute(queryParams)
-	if errors.Is(err, domain.ErrInvalidUsername) {
+	if errors.Is(err, userDomain.ErrInvalidUsername) {
 		microframework.SendValidationError(w, err)
 		return
 	}
-	if errors.Is(err, domain.ErrOpNotAllowed) {
+	if errors.Is(err, permissionDomain.ErrOpNotAllowed) {
 		microframework.SendForbidden(w)
 		return
 	}
@@ -62,12 +56,12 @@ func (t TaskHandler) GetCollection(w http.ResponseWriter, r *http.Request) {
 		microframework.SendInternalServerError(w)
 		return
 	}
-	responseBody := make([]TaskModel, len(tasks.Tasks))
-	for i := range tasks.Tasks {
+	responseBody := make([]TaskModel, len(tasks))
+	for i := range tasks {
 		responseBody[i] = TaskModel{
-			TaskId:      tasks.Tasks[i].TaskId,
-			Description: tasks.Tasks[i].Description,
-			Stage:       tasks.Tasks[i].Stage,
+			TaskId:      tasks[i].TaskNumber,
+			Description: tasks[i].Description,
+			Stage:       tasks[i].Stage,
 		}
 	}
 	t.Logger.LogIfErr(microframework.NewResponseBuilder(w).
@@ -94,29 +88,37 @@ func (t TaskHandler) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	createUsecase, err := t.CreateTaskFactory.Build(taskFactory.CreateDeps{Ctx: ctx})
+	createUsecase, err := t.CreateTaskFactory.Build(factory.CtxDeps{Ctx: ctx})
 	if err != nil {
 		t.Logger.Errorf("task post building: %s", err)
 		microframework.SendInternalServerError(w)
 		return
 	}
-	task := task_command.TaskInCreate{
+	taskDto := taskUsecase.TaskInCreate{
 		Description:   body.Description,
 		OwnerUsername: username,
 	}
-	createdTask, err := createUsecase.Execute(task)
-	if errors.Is(err, domain.ErrInvalidDescription) || errors.Is(err, domain.ErrInvalidUsername) {
+	createdTask, err := createUsecase.Execute(taskDto)
+	if errors.Is(err, task.ErrInvalidDescription) || errors.Is(err, userDomain.ErrInvalidUsername) {
 		microframework.SendValidationError(w, err)
 		return
-	} else if err != nil {
+	}
+	//if errors.Is(err, userUsecase.ErrUserDoesntExist) {
+	//	t.Logger.LogIfErr(microframework.NewResponseBuilder(w).
+	//		BuildStatus(http.StatusBadRequest).
+	//		BuildBodyNestedMsg("provided user does not exist").
+	//		Send())
+	//	return
+	//}
+	if err != nil {
 		t.Logger.Errorf("task post usecase call: %s", err)
 		microframework.SendInternalServerError(w)
 		return
 	}
 	responseBody := TaskModel{
-		TaskId:      int(createdTask.TaskId),
-		Description: task.Description,
-		Stage:       string(createdTask.Stage),
+		TaskId:      createdTask.TaskNumber,
+		Description: taskDto.Description,
+		Stage:       createdTask.Stage,
 	}
 	t.Logger.LogIfErr(microframework.NewResponseBuilder(w).
 		BuildStatus(http.StatusCreated).
@@ -153,20 +155,20 @@ func (t TaskHandler) Patch(w http.ResponseWriter, r *http.Request, taskId int) {
 		microframework.SendInternalServerError(w)
 		return
 	}
-	task := task_command.TaskInStageChange{
-		TaskId:      taskId,
+	taskDto := taskUsecase.TaskInStageChange{
+		TaskNumber:  taskId,
 		TargetStage: body.Stage,
 	}
-	err = changeStageUsecase.Execute(task)
-	if errors.Is(err, domain.ErrInvalidStage) {
+	err = changeStageUsecase.Execute(taskDto)
+	if errors.Is(err, task.ErrInvalidStage) {
 		microframework.SendValidationError(w, err)
 		return
 	}
-	if errors.Is(err, domain.ErrOpNotAllowed) {
+	if errors.Is(err, permissionDomain.ErrOpNotAllowed) {
 		microframework.SendForbidden(w)
 		return
 	}
-	if errors.Is(err, task_command.ErrTaskNotFound) {
+	if errors.Is(err, taskUsecase.ErrTaskDoesntExist) {
 		http.NotFound(w, r)
 		return
 	}

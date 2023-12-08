@@ -1,21 +1,16 @@
 package user
 
 import (
-	"context"
-	userAdapter "tracker_backend/src/adapter/user"
 	"tracker_backend/src/application/user"
+	"tracker_backend/src/factory"
 )
 
-type UserSaverDeps struct {
-	ctx context.Context
-}
-
 type AbsUserSaverFactory interface {
-	Build(UserSaverDeps) (user.UserSaver, error)
+	Build(deps factory.CtxDeps) (user.SaveUserUsecase, error)
 }
 
-type UserSaverStubFactory struct{}
-
-func (u UserSaverStubFactory) Build(UserSaverDeps) (user.UserSaver, error) {
-	return userAdapter.UserSaverStub{}, nil
-}
+//type UserSaverStubFactory struct{}
+//
+//func (u UserSaverStubFactory) Build(factory.CtxDeps) (user.UserSaver, error) {
+//	return userAdapter.UserSaverStub{}, nil
+//}

@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	userPattern, _           = regexp.Compile("^/api/user/?$")
-	taskCollectionPattern, _ = regexp.Compile("^/api/task/?$")
-	taskObjPattern, _        = regexp.Compile("^/api/task/([0-9]+)/?$")
-	swaggerPattern, _        = regexp.Compile("^/docs")
+	userPattern, _           = regexp.Compile("^/api/users/?$")
+	taskCollectionPattern, _ = regexp.Compile("^/api/tasks/?$")
+	taskObjPattern, _        = regexp.Compile("^/api/tasks/([0-9]+)/?$")
+	swaggerPattern, _        = regexp.Compile("^/docs/")
 )
 
 type MainHandler struct {

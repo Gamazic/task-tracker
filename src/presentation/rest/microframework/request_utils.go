@@ -8,11 +8,11 @@ import (
 
 var ValidationErr = errors.New("validation error")
 
-type Validatable interface {
+type DomainValidatable interface {
 	Validate() error
 }
 
-func ReadValidate(r io.ReadCloser, v Validatable) error {
+func ReadValidate(r io.ReadCloser, v DomainValidatable) error {
 	err := json.NewDecoder(r).Decode(v)
 	if err != nil {
 		return err

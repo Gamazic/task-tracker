@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
-	"tracker_backend/src/factory"
+	"tracker_backend/src/factory/db"
 	"tracker_backend/src/factory/task"
 	"tracker_backend/src/factory/user"
 	"tracker_backend/src/infrastructure"
@@ -18,9 +18,15 @@ const bodyMaxBytes = 1024
 func main() {
 	logger := infrastructure.PrintLogger{}
 
-	inmemoryDbFactory := factory.InMemoryFactory{}
+	dbFactory := db.InMemoryFactory{}
+	//dbFactory := db.MysqlFactory{
+	//	MysqlDsn:  "root:example@/tasktracker",
+	//	DbName:    "tasktracker",
+	//	UserTable: "user",
+	//	TaskTable: "task",
+	//}
 
-	userSaverFactory := factory.UserSaverWrapper{InMemoryFactory: &inmemoryDbFactory}
+	userSaverFactory := db.UserSaverWrapper{GatewayFactory: &dbFactory}
 	createUserFactory := user.CreateUserFactory{
 		SaverFactory: &userSaverFactory,
 	}
@@ -29,19 +35,19 @@ func main() {
 		Logger:            logger,
 	}
 
-	taskSaverFactory := factory.TaskSaverWrapper{InMemoryFactory: &inmemoryDbFactory}
+	taskSaverFactory := db.TaskSaverWrapper{GatewayFactory: &dbFactory}
 	createTaskFactory := task.CreateFactory{
-		SaverFactory: taskSaverFactory,
+		SaverFactory: &taskSaverFactory,
 	}
 
-	stageChangerFactory := factory.StageChangerWrapper{InMemoryFactory: &inmemoryDbFactory}
+	stageChangerFactory := db.StageChangerWrapper{GatewayFactory: &dbFactory}
 	changeStageFactory := task.ChangeStageFactory{
-		StageChangerFactory: stageChangerFactory,
+		StageChangerFactory: &stageChangerFactory,
 	}
 
-	taskDbGatewayFactory := factory.DbQueryGatewayWrapper{InMemoryFactory: &inmemoryDbFactory}
+	taskDbGatewayFactory := db.DbQueryGatewayWrapper{GatewayFactory: &dbFactory}
 	getOwnerTasksFactory := task.GetOwnerTasksFactory{
-		DbGatewayFactory: taskDbGatewayFactory,
+		DbGatewayFactory: &taskDbGatewayFactory,
 	}
 
 	taskHandler := task_controller.TaskHandler{

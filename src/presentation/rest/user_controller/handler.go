@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	userUsecase "tracker_backend/src/application/user"
+	"tracker_backend/src/factory"
 	userFactory "tracker_backend/src/factory/user"
 	"tracker_backend/src/infrastructure"
 	"tracker_backend/src/presentation/rest/microframework"
@@ -28,7 +29,7 @@ func (u UserHandler) Post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
-	createUsecase, err := u.CreateUserFactory.Build(userFactory.CreateUserDeps{Ctx: ctx})
+	createUsecase, err := u.CreateUserFactory.Build(factory.CtxDeps{Ctx: ctx})
 	if err != nil {
 		u.Logger.Errorf("user post building: %s", err)
 		microframework.SendInternalServerError(w)
