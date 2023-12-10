@@ -1,45 +1,49 @@
-package user_controller
+package register_controller
 
 import (
 	"errors"
+	"io"
 	"net/http"
-	userUsecase "tracker_backend/src/application/user"
+	"tracker_backend/src/application"
 	"tracker_backend/src/factory"
-	userFactory "tracker_backend/src/factory/user"
 	"tracker_backend/src/infrastructure"
 	"tracker_backend/src/presentation/rest/microframework"
 )
 
-type UserHandler struct {
-	CreateUserFactory userFactory.AbsCreateUserFactory
-	Logger            infrastructure.Logger
+type RegisterController struct {
+	RegisterFactory factory.AbsRegisterFactory
+	Logger          infrastructure.Logger
 }
 
-func (u UserHandler) Post(w http.ResponseWriter, r *http.Request) {
-	var body UserRequestModel
+func (u RegisterController) Post(w http.ResponseWriter, r *http.Request) {
+	var body RegisterRequestModel
 	err := microframework.ReadValidate(r.Body, &body)
+	if errors.Is(err, io.EOF) {
+		microframework.SendValidationError(w, errors.New("empty body"))
+		return
+	}
 	if errors.Is(err, microframework.ValidationErr) {
 		microframework.SendValidationError(w, err)
 		return
 	}
 	if err != nil {
-		u.Logger.Errorf("user post parsing: %s", err)
+		u.Logger.Errorf("register post parsing: %s", err)
 		microframework.SendValidationError(w, errors.New("bad body"))
 		return
 	}
-
 	ctx := r.Context()
-	createUsecase, err := u.CreateUserFactory.Build(factory.CtxDeps{Ctx: ctx})
+	register, err := u.RegisterFactory.Build(factory.CredentialCtxDeps{
+		Ctx:      ctx,
+		Username: body.Username,
+		Password: body.Password,
+	})
 	if err != nil {
-		u.Logger.Errorf("user post building: %s", err)
+		u.Logger.Errorf("register post building: %s", err)
 		microframework.SendInternalServerError(w)
 		return
 	}
-	user := userUsecase.UserInCreate{
-		Username: body.Username,
-	}
-	err = createUsecase.Execute(user)
-	if errors.Is(err, userUsecase.ErrUserAlreadyExist) {
+	err = register.Register()
+	if errors.Is(err, application.ErrIdentityAlreadyExist) {
 		u.Logger.LogIfErr(microframework.NewResponseBuilder(w).
 			BuildStatus(http.StatusBadRequest).
 			BuildBodyNestedMsg("user already exist").
@@ -47,12 +51,12 @@ func (u UserHandler) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		u.Logger.Errorf("user post usecase call: %s", err)
+		u.Logger.Errorf("register post usecase call: %s", err)
 		microframework.SendInternalServerError(w)
 		return
 	}
 	u.Logger.LogIfErr(microframework.NewResponseBuilder(w).
 		BuildStatus(http.StatusCreated).
-		BuildBody(UserResponseModel{Username: user.Username}).
+		BuildBody(RegisterResponseModel{Username: body.Username}).
 		Send())
 }

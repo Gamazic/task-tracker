@@ -2,16 +2,11 @@ package db
 
 import (
 	"tracker_backend/src/application/task"
-	"tracker_backend/src/application/user"
 	"tracker_backend/src/factory"
 )
 
 type UserSaverWrapper struct {
 	GatewayFactory AbsDbGatewayFactory
-}
-
-func (u UserSaverWrapper) Build(deps factory.CtxDeps) (user.SaveUserUsecase, error) {
-	return u.GatewayFactory.Build(deps)
 }
 
 type TaskSaverWrapper struct {

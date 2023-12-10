@@ -3,14 +3,14 @@ package main
 import (
 	"log"
 	"net/http"
+	"tracker_backend/src/factory"
 	"tracker_backend/src/factory/db"
 	"tracker_backend/src/factory/task"
-	"tracker_backend/src/factory/user"
 	"tracker_backend/src/infrastructure"
 	"tracker_backend/src/presentation/rest"
 	"tracker_backend/src/presentation/rest/microframework"
+	"tracker_backend/src/presentation/rest/register_controller"
 	"tracker_backend/src/presentation/rest/task_controller"
-	"tracker_backend/src/presentation/rest/user_controller"
 )
 
 const bodyMaxBytes = 1024
@@ -26,44 +26,52 @@ func main() {
 	//	TaskTable: "task",
 	//}
 
-	userSaverFactory := db.UserSaverWrapper{GatewayFactory: &dbFactory}
-	createUserFactory := user.CreateUserFactory{
-		SaverFactory: &userSaverFactory,
+	mysqlIdFactory := factory.BasicMysqlProviderFactory{
+		UsersTable: "user",
+		MysqlDsn:   "root:example@/tasktracker",
 	}
-	userHandler := user_controller.UserHandler{
-		CreateUserFactory: createUserFactory,
-		Logger:            logger,
-	}
+	mysqlIdProviderFactory := factory.MysqlIdProviderFactory{mysqlIdFactory}
+	mysqlRegisterFactory := factory.MysqlRegisterFactory{mysqlIdFactory}
 
 	taskSaverFactory := db.TaskSaverWrapper{GatewayFactory: &dbFactory}
 	createTaskFactory := task.CreateFactory{
-		SaverFactory: &taskSaverFactory,
+		SaverFactory:      &taskSaverFactory,
+		IdProviderFactory: &mysqlIdProviderFactory,
 	}
 
 	stageChangerFactory := db.StageChangerWrapper{GatewayFactory: &dbFactory}
 	changeStageFactory := task.ChangeStageFactory{
 		StageChangerFactory: &stageChangerFactory,
+		IdProviderFactory:   &mysqlIdProviderFactory,
 	}
 
 	taskDbGatewayFactory := db.DbQueryGatewayWrapper{GatewayFactory: &dbFactory}
 	getOwnerTasksFactory := task.GetOwnerTasksFactory{
-		DbGatewayFactory: &taskDbGatewayFactory,
+		DbGatewayFactory:  &taskDbGatewayFactory,
+		IdProviderFactory: &mysqlIdProviderFactory,
 	}
 
-	taskHandler := task_controller.TaskHandler{
+	taskController := task_controller.TaskController{
 		CreateTaskFactory:    createTaskFactory,
 		ChangeStageFactory:   changeStageFactory,
 		GetOwnerTasksFactory: getOwnerTasksFactory,
 		Logger:               logger,
 	}
 
+	registerController := register_controller.RegisterController{
+		RegisterFactory: &mysqlRegisterFactory,
+		Logger:          logger,
+	}
+
+	swaggerHandler := http.FileServer(http.Dir("./swagger"))
 	apiHandler := rest.MainHandler{
-		UserHandler: userHandler,
-		TaskHandler: taskHandler,
-		SwaggerDir:  "./swagger",
+		RegisterController: registerController,
+		TaskController:     taskController,
+		SwaggerHandler:     swaggerHandler,
 	}
 
 	mwHandler := microframework.Logging(apiHandler, logger)
 	mwHandler = microframework.MaxBytes(mwHandler, bodyMaxBytes)
+	mwHandler = microframework.BasicAuthentication(mwHandler, "/api/tasks")
 	log.Fatal(http.ListenAndServe("0.0.0.0:8080", mwHandler))
 }

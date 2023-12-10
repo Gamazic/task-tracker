@@ -3,6 +3,8 @@ package task
 import (
 	"errors"
 	"fmt"
+	"tracker_backend/src/application"
+	"tracker_backend/src/domain/permission"
 	taskDomain "tracker_backend/src/domain/task"
 	"tracker_backend/src/domain/user"
 )
@@ -22,17 +24,31 @@ type CreatedTaskArtefacts struct {
 }
 
 type CreateTaskCmd struct {
-	Saver TaskSaver
+	IdProvider        application.IdentityProvider
+	Saver             TaskSaver
+	permissionService permission.PermissionService
 }
 
 func (c CreateTaskCmd) Execute(taskDto TaskInCreate) (CreatedTaskArtefacts, error) {
-	description := taskDomain.Description(taskDto.Description)
-	err := description.Validate()
+	ownerUsername := user.Username(taskDto.OwnerUsername)
+	err := ownerUsername.Validate()
 	if err != nil {
 		return CreatedTaskArtefacts{}, err
 	}
-	ownerUsername := user.Username(taskDto.OwnerUsername)
-	err = ownerUsername.Validate()
+	requesterRole, err := c.IdProvider.Provide()
+	if err != nil {
+		return CreatedTaskArtefacts{}, err
+	}
+	canCreate := c.permissionService.HaveAccess(
+		requesterRole,
+		permission.TaskOwnershipParams{
+			TaskOwnerUsername: ownerUsername,
+		})
+	if !canCreate {
+		return CreatedTaskArtefacts{}, permission.ErrOpNotAllowed
+	}
+	description := taskDomain.Description(taskDto.Description)
+	err = description.Validate()
 	if err != nil {
 		return CreatedTaskArtefacts{}, err
 	}

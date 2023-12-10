@@ -3,6 +3,7 @@ package task
 import (
 	"errors"
 	"fmt"
+	"tracker_backend/src/application"
 	"tracker_backend/src/domain/permission"
 	"tracker_backend/src/domain/task"
 )
@@ -18,8 +19,8 @@ type TaskInStageChange struct {
 }
 
 type ChangeTaskStageCmd struct {
-	RequesterRoles permission.UserRoleParams
-	StageChanger   TaskStageChanger
+	IdProvider   application.IdentityProvider
+	StageChanger TaskStageChanger
 
 	permService permission.PermissionService
 }
@@ -33,8 +34,15 @@ func (c ChangeTaskStageCmd) Execute(taskDto TaskInStageChange) error {
 	if err != nil {
 		return err
 	}
+	rolesIdentity, err := c.IdProvider.Provide()
+	if errors.Is(err, application.ErrProvidingId) {
+		return err
+	}
+	if err != nil {
+		return fmt.Errorf("%w: %s", ErrChangeTaskStage, err)
+	}
 	taskExist, ownershipMatched, err := c.StageChanger.ChangeStage(ChangeStageDto{
-		TaskOwnerUsername: string(c.RequesterRoles.Username),
+		TaskOwnerUsername: string(rolesIdentity.Username),
 		TaskNumber:        taskDto.TaskNumber,
 		TargetStage:       taskDto.TargetStage,
 	})

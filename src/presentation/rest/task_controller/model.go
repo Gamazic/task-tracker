@@ -6,18 +6,6 @@ import (
 	"tracker_backend/src/presentation/rest/microframework"
 )
 
-const usernameHeaderKey = "Username"
-
-type UsernameHeader string
-
-func (u UsernameHeader) Validate() error {
-	if u == "" {
-		return fmt.Errorf("%w: non empty header '%s' is required",
-			microframework.ValidationErr, usernameHeaderKey)
-	}
-	return nil
-}
-
 type TaskPostRequestModel struct {
 	Description string `json:"description"`
 }

@@ -3,7 +3,6 @@ package inmemory
 import (
 	"sync"
 	taskUsecase "tracker_backend/src/application/task"
-	userUsecase "tracker_backend/src/application/user"
 )
 
 type taskInDb struct {
@@ -25,7 +24,7 @@ func NewDb() *Db {
 	}
 }
 
-func (d *Db) SaveIncrTaskNumber(taskDto taskUsecase.TaskSaveDto) (int, error) {
+func (d *Db) SaveIncrOwnerTaskNumber(taskDto taskUsecase.TaskSaveDto) (int, error) {
 	d.rwLock.Lock()
 	defer d.rwLock.Unlock()
 	nextId := len(d.userTasks[taskDto.OwnerUsername])
@@ -70,12 +69,6 @@ func (d *Db) fetchStoreOwnerTasks(username string) []taskInDb {
 		return []taskInDb{}
 	}
 	return tasks
-}
-
-func (d *Db) SaveCheckFreeUsername(userDto userUsecase.SaverUserDto) (bool, error) {
-	d.rwLock.Lock()
-	defer d.rwLock.Unlock()
-	return d.saveCheckFreeUsername(userDto.Username)
 }
 
 func (d *Db) saveCheckFreeUsername(username string) (bool, error) {

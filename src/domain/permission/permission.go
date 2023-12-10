@@ -10,7 +10,7 @@ var (
 	ErrOpNotAllowed = fmt.Errorf("%w: operation is not allowed", domain.ErrDomain)
 )
 
-type UserRoleParams struct {
+type UserRoleIdentity struct {
 	Username user.Username
 	// ...
 	// Group Group
