@@ -11,7 +11,7 @@ import (
 	"tracker_backend/src/domain/user"
 )
 
-type BasicAuthMysqlProvider struct {
+type BasicAuthPgProvider struct {
 	Username string
 	Password string
 
@@ -21,8 +21,8 @@ type BasicAuthMysqlProvider struct {
 	Ctx context.Context
 }
 
-func (b *BasicAuthMysqlProvider) Provide() (permission.UserRoleIdentity, error) {
-	query := fmt.Sprintf("SELECT password FROM %s WHERE username = ?;", b.UsersTable)
+func (b *BasicAuthPgProvider) Provide() (permission.UserRoleIdentity, error) {
+	query := fmt.Sprintf(`SELECT "password" FROM "%s" WHERE username = $1;`, b.UsersTable)
 	rows, err := b.ConnPool.QueryContext(b.Ctx, query, b.Username)
 	if err != nil {
 		return permission.UserRoleIdentity{}, err
@@ -42,8 +42,10 @@ func (b *BasicAuthMysqlProvider) Provide() (permission.UserRoleIdentity, error) 
 	}, nil
 }
 
-func (b *BasicAuthMysqlProvider) Register() error {
-	query := fmt.Sprintf("INSERT IGNORE INTO %s (username, password) VALUES(?, ?);", b.UsersTable)
+func (b *BasicAuthPgProvider) Register() error {
+	// This one query register works only if unique constraint on username is set
+	query := fmt.Sprintf(`INSERT INTO "%s" (username, "password") VALUES($1, $2) ON CONFLICT DO NOTHING;`,
+		b.UsersTable)
 	res, err := b.ConnPool.ExecContext(b.Ctx, query, b.Username, b.pswrdHash())
 	if err != nil {
 		return err
@@ -58,7 +60,7 @@ func (b *BasicAuthMysqlProvider) Register() error {
 	return nil
 }
 
-func (b *BasicAuthMysqlProvider) pswrdHash() []byte {
+func (b *BasicAuthPgProvider) pswrdHash() []byte {
 	hash := md5.Sum([]byte(b.Password))
 	return hash[:]
 }

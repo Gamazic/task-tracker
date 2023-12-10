@@ -19,36 +19,36 @@ func main() {
 	logger := infrastructure.PrintLogger{}
 
 	dbFactory := db.InMemoryFactory{}
-	//dbFactory := db.MysqlFactory{
-	//	MysqlDsn:  "root:example@/tasktracker",
+	//dbFactory := db.PgFactory{
+	//	PgDsn:  "root:example@/tasktracker",
 	//	DbName:    "tasktracker",
 	//	UserTable: "user",
 	//	TaskTable: "task",
 	//}
 
-	mysqlIdFactory := factory.BasicMysqlProviderFactory{
+	pgIdFactory := factory.BasicPgProviderFactory{
 		UsersTable: "user",
-		MysqlDsn:   "root:example@/tasktracker",
+		PgDsn:      "postgres://root:example@localhost:5432/tasktracker",
 	}
-	mysqlIdProviderFactory := factory.MysqlIdProviderFactory{mysqlIdFactory}
-	mysqlRegisterFactory := factory.MysqlRegisterFactory{mysqlIdFactory}
+	pgIdProviderFactory := factory.PgIdProviderFactory{pgIdFactory}
+	pgRegisterFactory := factory.PgRegisterFactory{pgIdFactory}
 
 	taskSaverFactory := db.TaskSaverWrapper{GatewayFactory: &dbFactory}
 	createTaskFactory := task.CreateFactory{
 		SaverFactory:      &taskSaverFactory,
-		IdProviderFactory: &mysqlIdProviderFactory,
+		IdProviderFactory: &pgIdProviderFactory,
 	}
 
 	stageChangerFactory := db.StageChangerWrapper{GatewayFactory: &dbFactory}
 	changeStageFactory := task.ChangeStageFactory{
 		StageChangerFactory: &stageChangerFactory,
-		IdProviderFactory:   &mysqlIdProviderFactory,
+		IdProviderFactory:   &pgIdProviderFactory,
 	}
 
 	taskDbGatewayFactory := db.DbQueryGatewayWrapper{GatewayFactory: &dbFactory}
 	getOwnerTasksFactory := task.GetOwnerTasksFactory{
 		DbGatewayFactory:  &taskDbGatewayFactory,
-		IdProviderFactory: &mysqlIdProviderFactory,
+		IdProviderFactory: &pgIdProviderFactory,
 	}
 
 	taskController := task_controller.TaskController{
@@ -59,7 +59,7 @@ func main() {
 	}
 
 	registerController := register_controller.RegisterController{
-		RegisterFactory: &mysqlRegisterFactory,
+		RegisterFactory: &pgRegisterFactory,
 		Logger:          logger,
 	}
 

@@ -3,9 +3,10 @@ package factory
 import (
 	"context"
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"tracker_backend/src/adapter/identity"
 	"tracker_backend/src/application"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 type CredentialCtxDeps struct {
@@ -22,21 +23,21 @@ type AbsRegisterFactory interface {
 	Build(deps CredentialCtxDeps) (application.IdentityRegister, error)
 }
 
-type BasicMysqlProviderFactory struct {
+type BasicPgProviderFactory struct {
 	UsersTable string
-	MysqlDsn   string
+	PgDsn      string
 	connPool   *sql.DB
 }
 
-func (b *BasicMysqlProviderFactory) Build(deps CredentialCtxDeps) (*identity.BasicAuthMysqlProvider, error) {
+func (b *BasicPgProviderFactory) Build(deps CredentialCtxDeps) (*identity.BasicAuthPgProvider, error) {
 	if b.connPool == nil {
-		connPool, err := sql.Open("mysql", b.MysqlDsn)
+		connPool, err := sql.Open("pgx", b.PgDsn)
 		if err != nil {
 			return nil, err
 		}
 		b.connPool = connPool
 	}
-	return &identity.BasicAuthMysqlProvider{
+	return &identity.BasicAuthPgProvider{
 		Username:   deps.Username,
 		Password:   deps.Password,
 		UsersTable: b.UsersTable,
@@ -45,18 +46,18 @@ func (b *BasicMysqlProviderFactory) Build(deps CredentialCtxDeps) (*identity.Bas
 	}, nil
 }
 
-type MysqlIdProviderFactory struct {
-	BasicMysqlProviderFactory
+type PgIdProviderFactory struct {
+	BasicPgProviderFactory
 }
 
-func (m *MysqlIdProviderFactory) Build(deps CredentialCtxDeps) (application.IdentityProvider, error) {
-	return m.BasicMysqlProviderFactory.Build(deps)
+func (m *PgIdProviderFactory) Build(deps CredentialCtxDeps) (application.IdentityProvider, error) {
+	return m.BasicPgProviderFactory.Build(deps)
 }
 
-type MysqlRegisterFactory struct {
-	BasicMysqlProviderFactory
+type PgRegisterFactory struct {
+	BasicPgProviderFactory
 }
 
-func (m *MysqlRegisterFactory) Build(deps CredentialCtxDeps) (application.IdentityRegister, error) {
-	return m.BasicMysqlProviderFactory.Build(deps)
+func (m *PgRegisterFactory) Build(deps CredentialCtxDeps) (application.IdentityRegister, error) {
+	return m.BasicPgProviderFactory.Build(deps)
 }
