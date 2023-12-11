@@ -26,13 +26,22 @@ that is easily comprehensible for humans while being less IO bound.
 
 ### Run
 
+Run infrastructure dependencies
+
+```shell
+docker-compose up -d
+```
+
+Run a web application
+
 ```go
 go run ./cmd/rest_api
 ```
 
 ### HTTP Api
 
-Swagger [http://localhost:8080/docs/](http://localhost:8080/docs/)
+#### Swagger
+[http://localhost:8080/docs/](http://localhost:8080/docs/)
 
 #### Create user
 
