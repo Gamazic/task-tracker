@@ -1,4 +1,4 @@
-package main
+package rest
 
 import (
 	"database/sql"
@@ -8,33 +8,43 @@ import (
 	"tracker_backend/src/factory/db"
 	"tracker_backend/src/factory/task"
 	"tracker_backend/src/infrastructure"
-	"tracker_backend/src/presentation/rest"
 	"tracker_backend/src/presentation/rest/microframework"
 	"tracker_backend/src/presentation/rest/register_controller"
 	"tracker_backend/src/presentation/rest/task_controller"
 )
 
-const bodyMaxBytes = 1024
+type PgConf struct {
+	Url       string
+	DbName    string
+	UserTable string
+	TaskTable string
+}
 
-func main() {
+type App struct {
+	PgConf          PgConf
+	SwaggerDirPath  string
+	ApiBodyMaxBytes int64
+	ApiAddr         string
+}
+
+func (a App) Run() error {
 	logger := infrastructure.PrintLogger{}
 
-	connPool, err := sql.Open("pgx", "postgres://root:example@localhost:5432/tasktracker")
+	connPool, err := sql.Open("pgx", a.PgConf.Url)
 	if err != nil {
 		log.Fatal(err)
 	}
 	dbFactory := db.PgFactory{
-		PgUrl:     "root:example@/tasktracker",
-		DbName:    "tasktracker",
-		UserTable: "user",
-		TaskTable: "task",
+		DbName:    a.PgConf.DbName,
+		UserTable: a.PgConf.UserTable,
+		TaskTable: a.PgConf.TaskTable,
 		ConnPool:  connPool,
 	}
 	//dbFactory := db.InMemoryFactory{}
 
 	pgIdFactory := factory.BasicPgProviderFactory{
-		UsersTable: "user",
-		ConnPool:   connPool,
+		UserTable: a.PgConf.UserTable,
+		ConnPool:  connPool,
 	}
 	pgIdProviderFactory := factory.PgIdProviderFactory{pgIdFactory}
 	pgRegisterFactory := factory.PgRegisterFactory{pgIdFactory}
@@ -69,15 +79,15 @@ func main() {
 		Logger:          logger,
 	}
 
-	swaggerHandler := http.FileServer(http.Dir("./swagger"))
-	apiHandler := rest.MainHandler{
+	swaggerHandler := http.FileServer(http.Dir(a.SwaggerDirPath))
+	apiHandler := MainHandler{
 		RegisterController: registerController,
 		TaskController:     taskController,
 		SwaggerHandler:     swaggerHandler,
 	}
 
 	mwHandler := microframework.Logging(apiHandler, logger)
-	mwHandler = microframework.MaxBytes(mwHandler, bodyMaxBytes)
+	mwHandler = microframework.MaxBytes(mwHandler, a.ApiBodyMaxBytes)
 	mwHandler = microframework.BasicAuthentication(mwHandler, "/api/tasks")
-	log.Fatal(http.ListenAndServe("0.0.0.0:8080", mwHandler))
+	return http.ListenAndServe(a.ApiAddr, mwHandler)
 }

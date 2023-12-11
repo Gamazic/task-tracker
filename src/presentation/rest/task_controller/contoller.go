@@ -12,7 +12,6 @@ import (
 	userDomain "tracker_backend/src/domain/user"
 	"tracker_backend/src/factory"
 	taskFactory "tracker_backend/src/factory/task"
-	"tracker_backend/src/infrastructure"
 	"tracker_backend/src/presentation/rest/microframework"
 )
 
@@ -20,7 +19,7 @@ type TaskController struct {
 	CreateTaskFactory    taskFactory.AbsCreateFactory
 	ChangeStageFactory   taskFactory.AbsChangeStageFactory
 	GetOwnerTasksFactory taskFactory.AbsGetOwnerTasksFactory
-	Logger               infrastructure.Logger
+	Logger               microframework.Logger
 }
 
 func (t TaskController) GetCollection(w http.ResponseWriter, r *http.Request) {

@@ -12,7 +12,7 @@ var (
 	registerPattern, _       = regexp.Compile("^/api/register/?$")
 	taskCollectionPattern, _ = regexp.Compile("^/api/tasks/?$")
 	taskObjPattern, _        = regexp.Compile("^/api/tasks/([0-9]+)/?$")
-	swaggerPattern, _        = regexp.Compile("^/docs/")
+	swaggerPattern, _        = regexp.Compile("^/docs/?")
 )
 
 type MainHandler struct {

@@ -8,7 +8,6 @@ import (
 )
 
 type PgFactory struct {
-	PgUrl     string
 	DbName    string
 	UserTable string
 	TaskTable string

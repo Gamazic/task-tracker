@@ -3,7 +3,6 @@ package microframework
 import (
 	"net/http"
 	"time"
-	"tracker_backend/src/infrastructure"
 )
 
 type loggingResponseWriter struct {
@@ -16,7 +15,7 @@ func (l *loggingResponseWriter) WriteHeader(code int) {
 	l.ResponseWriter.WriteHeader(code)
 }
 
-func Logging(next http.Handler, logger infrastructure.Logger) http.Handler {
+func Logging(next http.Handler, logger Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		start := time.Now()
 		loggingW := &loggingResponseWriter{ResponseWriter: w}

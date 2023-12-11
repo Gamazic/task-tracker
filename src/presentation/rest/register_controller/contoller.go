@@ -6,13 +6,12 @@ import (
 	"net/http"
 	"tracker_backend/src/application"
 	"tracker_backend/src/factory"
-	"tracker_backend/src/infrastructure"
 	"tracker_backend/src/presentation/rest/microframework"
 )
 
 type RegisterController struct {
 	RegisterFactory factory.AbsRegisterFactory
-	Logger          infrastructure.Logger
+	Logger          microframework.Logger
 }
 
 func (u RegisterController) Post(w http.ResponseWriter, r *http.Request) {
