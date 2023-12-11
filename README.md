@@ -32,7 +32,7 @@ go run ./cmd/rest_api
 
 ### HTTP Api
 
-Swagger `localhost:8080/docs`
+Swagger [http://localhost:8080/docs/](http://localhost:8080/docs/)
 
 #### Create user
 
