@@ -27,22 +27,24 @@ that is easily comprehensible for humans while being less IO bound.
 ### Run
 
 ```go
-go run ./src/presentation/rest/main
+go run ./cmd/rest_api
 ```
 
 ### HTTP Api
 
+Swagger [http://localhost:8080/docs/](http://localhost:8080/docs/)
+
 #### Create user
 
 ```shell
-curl -X POST 'localhost:8080/api/user' -d '{"username": "MyUsername"}'
+curl -X POST 'localhost:8080/api/register' -d '{"username": "MyUsername", "password": "example"}'
 ```
 `{"username":"MyUsername"}`
 
 #### Create task
 
 ```shell
-curl -X POST 'localhost:8080/api/task' -d '{"description": "code"}' -H 'Username: MyUsername'
+curl -X POST 'localhost:8080/api/tasks' -d '{"description": "code"}' -H 'Authorization: Basic ...'
 ```
 `{"task_id":1,"description":"code","stage":"todo"}`
 
@@ -50,14 +52,14 @@ curl -X POST 'localhost:8080/api/task' -d '{"description": "code"}' -H 'Username
 #### Change task stage
 
 ```shell
-curl -X PATCH 'localhost:8080/api/task/1' -d '{"stage": "done"}' -H 'Username: MyUsername'
+curl -X PATCH 'localhost:8080/api/tasks/1' -d '{"stage": "done"}' -H 'Authorization: Basic ...'
 ```
 `{"task_id":1}`
 
 #### Get tasks of user
 
 ```shell
-curl -X GET 'localhost:8080/api/task' -H 'Username: MyUsername'
+curl -X GET 'localhost:8080/api/tasks' -H 'Authorization: Basic ...'
 ```
 `[{"task_id":1,"description":"code","stage":"todo"}]`
 

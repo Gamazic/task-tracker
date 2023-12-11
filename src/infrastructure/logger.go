@@ -5,13 +5,6 @@ import (
 	"time"
 )
 
-type Logger interface {
-	Errorf(template string, args ...any)
-	Infof(template string, args ...any)
-	Error(msg string)
-	LogIfErr(err error)
-}
-
 type PrintLogger struct{}
 
 func (PrintLogger) Errorf(template string, args ...any) {
