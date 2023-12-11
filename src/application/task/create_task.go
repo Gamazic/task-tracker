@@ -53,7 +53,7 @@ func (c CreateTaskCmd) Execute(taskDto TaskInCreate) (CreatedTaskArtefacts, erro
 		return CreatedTaskArtefacts{}, err
 	}
 	stage := string(taskDomain.ToDo)
-	taskNumber, err := c.Saver.SaveIncrTaskNumber(TaskSaveDto{
+	taskNumber, err := c.Saver.SaveIncrOwnerTaskNumber(TaskSaveDto{
 		Description:   taskDto.Description,
 		OwnerUsername: taskDto.OwnerUsername,
 		Stage:         stage,

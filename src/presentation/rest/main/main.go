@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"tracker_backend/src/factory"
@@ -18,17 +19,22 @@ const bodyMaxBytes = 1024
 func main() {
 	logger := infrastructure.PrintLogger{}
 
-	dbFactory := db.InMemoryFactory{}
-	//dbFactory := db.PgFactory{
-	//	PgDsn:  "root:example@/tasktracker",
-	//	DbName:    "tasktracker",
-	//	UserTable: "user",
-	//	TaskTable: "task",
-	//}
+	connPool, err := sql.Open("pgx", "postgres://root:example@localhost:5432/tasktracker")
+	if err != nil {
+		log.Fatal(err)
+	}
+	dbFactory := db.PgFactory{
+		PgUrl:     "root:example@/tasktracker",
+		DbName:    "tasktracker",
+		UserTable: "user",
+		TaskTable: "task",
+		ConnPool:  connPool,
+	}
+	//dbFactory := db.InMemoryFactory{}
 
 	pgIdFactory := factory.BasicPgProviderFactory{
 		UsersTable: "user",
-		PgDsn:      "postgres://root:example@localhost:5432/tasktracker",
+		ConnPool:   connPool,
 	}
 	pgIdProviderFactory := factory.PgIdProviderFactory{pgIdFactory}
 	pgRegisterFactory := factory.PgRegisterFactory{pgIdFactory}

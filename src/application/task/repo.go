@@ -7,7 +7,7 @@ type TaskSaveDto struct {
 }
 
 type TaskSaver interface {
-	SaveIncrTaskNumber(task TaskSaveDto) (int, error)
+	SaveIncrOwnerTaskNumber(task TaskSaveDto) (int, error)
 }
 
 type OwnerTaskQuerier interface {
@@ -21,5 +21,5 @@ type ChangeStageDto struct {
 }
 
 type TaskStageChanger interface {
-	ChangeStage(ChangeStageDto) (taskExist bool, ownershipMatched bool, err error)
+	ChangeStage(ChangeStageDto) (taskExist bool, err error)
 }

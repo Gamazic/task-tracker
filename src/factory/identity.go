@@ -25,23 +25,15 @@ type AbsRegisterFactory interface {
 
 type BasicPgProviderFactory struct {
 	UsersTable string
-	PgDsn      string
-	connPool   *sql.DB
+	ConnPool   *sql.DB
 }
 
 func (b *BasicPgProviderFactory) Build(deps CredentialCtxDeps) (*identity.BasicAuthPgProvider, error) {
-	if b.connPool == nil {
-		connPool, err := sql.Open("pgx", b.PgDsn)
-		if err != nil {
-			return nil, err
-		}
-		b.connPool = connPool
-	}
 	return &identity.BasicAuthPgProvider{
 		Username:   deps.Username,
 		Password:   deps.Password,
 		UsersTable: b.UsersTable,
-		ConnPool:   b.connPool,
+		ConnPool:   b.ConnPool,
 		Ctx:        deps.Ctx,
 	}, nil
 }

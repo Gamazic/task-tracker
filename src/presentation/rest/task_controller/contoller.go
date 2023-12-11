@@ -168,8 +168,9 @@ func (t TaskController) Patch(w http.ResponseWriter, r *http.Request, taskId int
 		return
 	}
 	taskDto := taskUsecase.TaskInStageChange{
-		TaskNumber:  taskId,
-		TargetStage: body.Stage,
+		TaskNumber:    taskId,
+		TargetStage:   body.Stage,
+		OwnerUsername: credentials.Username,
 	}
 	err = changeStageUsecase.Execute(taskDto)
 	if errors.Is(err, task.ErrInvalidStage) {

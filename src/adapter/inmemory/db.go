@@ -37,15 +37,15 @@ func (d *Db) SaveIncrOwnerTaskNumber(taskDto taskUsecase.TaskSaveDto) (int, erro
 	return nextId, nil
 }
 
-func (d *Db) ChangeStage(changeStageDto taskUsecase.ChangeStageDto) (taskExist bool, ownershipMatched bool, err error) {
+func (d *Db) ChangeStage(changeStageDto taskUsecase.ChangeStageDto) (taskExist bool, err error) {
 	d.rwLock.Lock()
 	defer d.rwLock.Unlock()
 	username := changeStageDto.TaskOwnerUsername
 	if changeStageDto.TaskNumber >= len(d.userTasks[username]) {
-		return false, true, nil
+		return false, nil
 	}
 	d.userTasks[username][changeStageDto.TaskNumber].Stage = changeStageDto.TargetStage
-	return true, true, nil
+	return true, nil
 }
 
 func (d *Db) FetchOwnerTasks(taskDto taskUsecase.OwnerTasksQuery) ([]taskUsecase.TaskResult, error) {
