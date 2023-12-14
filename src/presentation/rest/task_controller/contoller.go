@@ -36,7 +36,7 @@ func (t TaskController) GetCollection(w http.ResponseWriter, r *http.Request) {
 	}
 	getOwnerTasksUsecase, err := t.GetOwnerTasksFactory.Build(factoryDeps)
 	if err != nil {
-		t.Logger.Errorf("task patch building change stage: %s", err)
+		t.Logger.Errorf("tasks get building change stage: %s", err)
 		microframework.SendInternalServerError(w)
 		return
 	}
@@ -44,6 +44,10 @@ func (t TaskController) GetCollection(w http.ResponseWriter, r *http.Request) {
 		OwnerUsername: credentials.Username,
 	}
 	tasks, err := getOwnerTasksUsecase.Execute(queryParams)
+	if errors.Is(err, application.ErrProvidingId) {
+		microframework.SendForbidden(w)
+		return
+	}
 	if errors.Is(err, userDomain.ErrInvalidUsername) {
 		microframework.SendValidationError(w, err)
 		return
@@ -53,7 +57,7 @@ func (t TaskController) GetCollection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		t.Logger.Errorf("task patch usecase call: %s", err)
+		t.Logger.Errorf("tasks get usecase call: %s", err)
 		microframework.SendInternalServerError(w)
 		return
 	}
@@ -109,6 +113,10 @@ func (t TaskController) Post(w http.ResponseWriter, r *http.Request) {
 		OwnerUsername: credentials.Username,
 	}
 	createdTask, err := createUsecase.Execute(taskDto)
+	if errors.Is(err, application.ErrProvidingId) {
+		microframework.SendForbidden(w)
+		return
+	}
 	if errors.Is(err, task.ErrInvalidDescription) || errors.Is(err, userDomain.ErrInvalidUsername) {
 		microframework.SendValidationError(w, err)
 		return

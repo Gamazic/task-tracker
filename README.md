@@ -8,6 +8,7 @@ It allows users to create, manage and track tasks.
 This project is an example of a supporting backend application in the `Go` language.
 It aims to combine high-performance backend with Domain-Driven Design (DDD)
 and Clean Architecture techniques.
+Specifically, anemic models were opted as a pattern within the Domain-Driven Design approach
 
 ## Features
 
@@ -42,8 +43,8 @@ go run ./cmd/rest_api
 
 #### Swagger
 [http://localhost:8080/docs/](http://localhost:8080/docs/)
-
-#### Create user
+![img.png](doc/swagger.png)
+#### Register user
 
 ```shell
 curl -X POST 'localhost:8080/api/register' -d '{"username": "MyUsername", "password": "example"}'

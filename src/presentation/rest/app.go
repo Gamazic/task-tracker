@@ -86,8 +86,8 @@ func (a App) Run() error {
 		SwaggerHandler:     swaggerHandler,
 	}
 
-	mwHandler := microframework.Logging(apiHandler, logger)
+	mwHandler := microframework.BasicAuthentication(apiHandler, "/api/tasks")
 	mwHandler = microframework.MaxBytes(mwHandler, a.ApiBodyMaxBytes)
-	mwHandler = microframework.BasicAuthentication(mwHandler, "/api/tasks")
+	mwHandler = microframework.Logging(mwHandler, logger)
 	return http.ListenAndServe(a.ApiAddr, mwHandler)
 }

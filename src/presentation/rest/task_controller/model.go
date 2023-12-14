@@ -22,6 +22,7 @@ var availableStages = map[string]struct{}{
 	"todo":        {},
 	"in_progress": {},
 	"done":        {},
+	"closed":      {},
 }
 
 type TaskPatchRequestModel struct {
