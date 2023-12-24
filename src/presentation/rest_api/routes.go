@@ -1,11 +1,11 @@
-package rest
+package rest_api
 
 import (
 	"net/http"
 	"regexp"
 	"strconv"
-	"tracker_backend/src/presentation/rest/register_controller"
-	"tracker_backend/src/presentation/rest/task_controller"
+	"tracker_backend/src/presentation/rest_api/register_controller"
+	"tracker_backend/src/presentation/rest_api/task_controller"
 )
 
 var (

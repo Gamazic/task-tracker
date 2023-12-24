@@ -2,12 +2,12 @@ package main
 
 import (
 	"log"
-	"tracker_backend/src/presentation/rest"
+	"tracker_backend/src/presentation/rest_api/app"
 )
 
 func main() {
-	app := rest.App{
-		PgConf: rest.PgConf{
+	app := app.App{
+		PgConf: app.PgConf{
 			Url:       "postgres://root:example@localhost:5432/tasktracker",
 			DbName:    "tasktracker",
 			UserTable: "user",

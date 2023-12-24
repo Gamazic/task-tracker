@@ -1,16 +1,17 @@
-package rest
+package app
 
 import (
 	"database/sql"
 	"log"
 	"net/http"
-	"tracker_backend/src/factory"
-	"tracker_backend/src/factory/db"
-	"tracker_backend/src/factory/task"
 	"tracker_backend/src/infrastructure"
-	"tracker_backend/src/presentation/rest/microframework"
-	"tracker_backend/src/presentation/rest/register_controller"
-	"tracker_backend/src/presentation/rest/task_controller"
+	"tracker_backend/src/presentation/rest_api"
+	"tracker_backend/src/presentation/rest_api/app/factory"
+	"tracker_backend/src/presentation/rest_api/app/factory/db"
+	"tracker_backend/src/presentation/rest_api/app/factory/task"
+	"tracker_backend/src/presentation/rest_api/microframework"
+	"tracker_backend/src/presentation/rest_api/register_controller"
+	"tracker_backend/src/presentation/rest_api/task_controller"
 )
 
 type PgConf struct {
@@ -80,7 +81,7 @@ func (a App) Run() error {
 	}
 
 	swaggerHandler := http.FileServer(http.Dir(a.SwaggerDirPath))
-	apiHandler := MainHandler{
+	apiHandler := rest_api.MainHandler{
 		RegisterController: registerController,
 		TaskController:     taskController,
 		SwaggerHandler:     swaggerHandler,

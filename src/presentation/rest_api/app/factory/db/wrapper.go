@@ -2,8 +2,12 @@ package db
 
 import (
 	"tracker_backend/src/application/task"
-	"tracker_backend/src/factory"
+	"tracker_backend/src/presentation/rest_api/app/factory"
 )
+
+type AbsDbGatewayFactory interface {
+	Build(factory.CtxDeps) (DbGateway, error)
+}
 
 type UserSaverWrapper struct {
 	GatewayFactory AbsDbGatewayFactory

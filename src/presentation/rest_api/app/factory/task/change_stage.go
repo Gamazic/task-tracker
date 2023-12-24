@@ -2,19 +2,16 @@ package task
 
 import (
 	taskUsecase "tracker_backend/src/application/task"
-	"tracker_backend/src/factory"
+	"tracker_backend/src/presentation/rest_api/app/factory"
+	"tracker_backend/src/presentation/rest_api/task_controller"
 )
-
-type AbsChangeStageFactory interface {
-	Build(deps factory.CredentialCtxDeps) (taskUsecase.ChangeStageUsecase, error)
-}
 
 type ChangeStageFactory struct {
 	StageChangerFactory AbsStageChangerFactory
-	IdProviderFactory   factory.AbsIdProviderFactory
+	IdProviderFactory   task_controller.AbsIdProviderFactory
 }
 
-func (c ChangeStageFactory) Build(deps factory.CredentialCtxDeps) (taskUsecase.ChangeStageUsecase, error) {
+func (c ChangeStageFactory) Build(deps task_controller.CredentialCtxDeps) (task_controller.ChangeStageUsecase, error) {
 	changer, err := c.StageChangerFactory.Build(factory.CtxDeps{Ctx: deps.Ctx})
 	if err != nil {
 		return nil, err
