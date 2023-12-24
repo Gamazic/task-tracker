@@ -36,7 +36,7 @@ docker-compose up -d
 Run a web application
 
 ```go
-go run ./cmd/rest_api
+go run ./src/cmd/rest_api
 ```
 
 ### HTTP Api

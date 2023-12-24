@@ -90,5 +90,8 @@ func (a App) Run() error {
 	mwHandler := microframework.BasicAuthentication(apiHandler, "/api/tasks")
 	mwHandler = microframework.MaxBytes(mwHandler, a.ApiBodyMaxBytes)
 	mwHandler = microframework.Logging(mwHandler, logger)
+
+	logger.Infof("rest api is built and ready to listen on address %s", a.ApiAddr)
+
 	return http.ListenAndServe(a.ApiAddr, mwHandler)
 }
