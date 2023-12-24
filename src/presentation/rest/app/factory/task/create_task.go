@@ -2,19 +2,16 @@ package task
 
 import (
 	taskUsecase "tracker_backend/src/application/task"
-	"tracker_backend/src/factory"
+	"tracker_backend/src/presentation/rest/app/factory"
+	"tracker_backend/src/presentation/rest/task_controller"
 )
-
-type AbsCreateFactory interface {
-	Build(deps factory.CredentialCtxDeps) (taskUsecase.CreateTaskUsecase, error)
-}
 
 type CreateFactory struct {
 	SaverFactory      AbsTaskSaverFactory
-	IdProviderFactory factory.AbsIdProviderFactory
+	IdProviderFactory task_controller.AbsIdProviderFactory
 }
 
-func (c CreateFactory) Build(deps factory.CredentialCtxDeps) (taskUsecase.CreateTaskUsecase, error) {
+func (c CreateFactory) Build(deps task_controller.CredentialCtxDeps) (task_controller.CreateTaskUsecase, error) {
 	saver, err := c.SaverFactory.Build(factory.CtxDeps{Ctx: deps.Ctx})
 	if err != nil {
 		return nil, err

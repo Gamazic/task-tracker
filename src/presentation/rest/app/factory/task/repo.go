@@ -2,7 +2,7 @@ package task
 
 import (
 	"tracker_backend/src/application/task"
-	"tracker_backend/src/factory"
+	"tracker_backend/src/presentation/rest/app/factory"
 )
 
 type AbsTaskSaverFactory interface {

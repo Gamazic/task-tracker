@@ -1,13 +1,14 @@
-package rest
+package app
 
 import (
 	"database/sql"
 	"log"
 	"net/http"
-	"tracker_backend/src/factory"
-	"tracker_backend/src/factory/db"
-	"tracker_backend/src/factory/task"
 	"tracker_backend/src/infrastructure"
+	"tracker_backend/src/presentation/rest"
+	"tracker_backend/src/presentation/rest/app/factory"
+	"tracker_backend/src/presentation/rest/app/factory/db"
+	"tracker_backend/src/presentation/rest/app/factory/task"
 	"tracker_backend/src/presentation/rest/microframework"
 	"tracker_backend/src/presentation/rest/register_controller"
 	"tracker_backend/src/presentation/rest/task_controller"
@@ -80,7 +81,7 @@ func (a App) Run() error {
 	}
 
 	swaggerHandler := http.FileServer(http.Dir(a.SwaggerDirPath))
-	apiHandler := MainHandler{
+	apiHandler := rest.MainHandler{
 		RegisterController: registerController,
 		TaskController:     taskController,
 		SwaggerHandler:     swaggerHandler,

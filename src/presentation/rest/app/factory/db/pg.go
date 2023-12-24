@@ -2,9 +2,8 @@ package db
 
 import (
 	"database/sql"
-	"tracker_backend/src/adapter"
 	"tracker_backend/src/adapter/pg"
-	"tracker_backend/src/factory"
+	"tracker_backend/src/presentation/rest/app/factory"
 )
 
 type PgFactory struct {
@@ -14,7 +13,7 @@ type PgFactory struct {
 	ConnPool  *sql.DB
 }
 
-func (m *PgFactory) Build(deps factory.CtxDeps) (adapter.DbGateway, error) {
+func (m *PgFactory) Build(deps factory.CtxDeps) (DbGateway, error) {
 	return &pg.PgDbAdapter{
 		TaskTable: m.TaskTable,
 		ConnPool:  m.ConnPool,

@@ -5,12 +5,11 @@ import (
 	"io"
 	"net/http"
 	"tracker_backend/src/application"
-	"tracker_backend/src/factory"
 	"tracker_backend/src/presentation/rest/microframework"
 )
 
 type RegisterController struct {
-	RegisterFactory factory.AbsRegisterFactory
+	RegisterFactory AbsRegisterFactory
 	Logger          microframework.Logger
 }
 
@@ -31,7 +30,7 @@ func (u RegisterController) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	register, err := u.RegisterFactory.Build(factory.CredentialCtxDeps{
+	register, err := u.RegisterFactory.Build(RegisterDeps{
 		Ctx:      ctx,
 		Username: body.Username,
 		Password: body.Password,

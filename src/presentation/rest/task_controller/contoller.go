@@ -10,15 +10,13 @@ import (
 	permissionDomain "tracker_backend/src/domain/permission"
 	"tracker_backend/src/domain/task"
 	userDomain "tracker_backend/src/domain/user"
-	"tracker_backend/src/factory"
-	taskFactory "tracker_backend/src/factory/task"
 	"tracker_backend/src/presentation/rest/microframework"
 )
 
 type TaskController struct {
-	CreateTaskFactory    taskFactory.AbsCreateFactory
-	ChangeStageFactory   taskFactory.AbsChangeStageFactory
-	GetOwnerTasksFactory taskFactory.AbsGetOwnerTasksFactory
+	CreateTaskFactory    AbsCreateFactory
+	ChangeStageFactory   AbsChangeStageFactory
+	GetOwnerTasksFactory AbsGetOwnerTasksFactory
 	Logger               microframework.Logger
 }
 
@@ -29,7 +27,7 @@ func (t TaskController) GetCollection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	factoryDeps := factory.CredentialCtxDeps{
+	factoryDeps := CredentialCtxDeps{
 		Ctx:      ctx,
 		Username: credentials.Username,
 		Password: credentials.Password,
@@ -97,7 +95,7 @@ func (t TaskController) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	factoryDeps := factory.CredentialCtxDeps{
+	factoryDeps := CredentialCtxDeps{
 		Ctx:      ctx,
 		Username: credentials.Username,
 		Password: credentials.Password,
@@ -163,7 +161,7 @@ func (t TaskController) Patch(w http.ResponseWriter, r *http.Request, taskId int
 		return
 	}
 	ctx := r.Context()
-	factoryDeps := factory.CredentialCtxDeps{
+	factoryDeps := CredentialCtxDeps{
 		Ctx:      ctx,
 		Username: credentials.Username,
 		Password: credentials.Password,

@@ -1,4 +1,4 @@
-package adapter
+package db
 
 import (
 	"tracker_backend/src/application/task"
