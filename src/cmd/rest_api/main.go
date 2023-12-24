@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"tracker_backend/src/presentation/rest/app"
+	"tracker_backend/src/presentation/rest_api/app"
 )
 
 func main() {

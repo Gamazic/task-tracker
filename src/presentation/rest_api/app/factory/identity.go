@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"tracker_backend/src/adapter/identity"
 	"tracker_backend/src/application"
-	"tracker_backend/src/presentation/rest/register_controller"
-	"tracker_backend/src/presentation/rest/task_controller"
+	"tracker_backend/src/presentation/rest_api/register_controller"
+	"tracker_backend/src/presentation/rest_api/task_controller"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )

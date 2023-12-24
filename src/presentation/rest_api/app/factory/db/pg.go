@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 	"tracker_backend/src/adapter/pg"
-	"tracker_backend/src/presentation/rest/app/factory"
+	"tracker_backend/src/presentation/rest_api/app/factory"
 )
 
 type PgFactory struct {

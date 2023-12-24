@@ -10,7 +10,7 @@ import (
 	permissionDomain "tracker_backend/src/domain/permission"
 	"tracker_backend/src/domain/task"
 	userDomain "tracker_backend/src/domain/user"
-	"tracker_backend/src/presentation/rest/microframework"
+	"tracker_backend/src/presentation/rest_api/microframework"
 )
 
 type TaskController struct {

@@ -2,7 +2,7 @@ package register_controller
 
 import (
 	"fmt"
-	"tracker_backend/src/presentation/rest/microframework"
+	"tracker_backend/src/presentation/rest_api/microframework"
 )
 
 type RegisterRequestModel struct {

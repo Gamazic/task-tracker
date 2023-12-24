@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 	"tracker_backend/src/application"
-	"tracker_backend/src/presentation/rest/microframework"
+	"tracker_backend/src/presentation/rest_api/microframework"
 )
 
 type RegisterController struct {

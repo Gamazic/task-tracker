@@ -3,7 +3,7 @@ package task_controller
 import (
 	"fmt"
 	"strconv"
-	"tracker_backend/src/presentation/rest/microframework"
+	"tracker_backend/src/presentation/rest_api/microframework"
 )
 
 type TaskPostRequestModel struct {

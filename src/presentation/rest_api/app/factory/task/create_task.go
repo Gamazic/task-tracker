@@ -2,8 +2,8 @@ package task
 
 import (
 	taskUsecase "tracker_backend/src/application/task"
-	"tracker_backend/src/presentation/rest/app/factory"
-	"tracker_backend/src/presentation/rest/task_controller"
+	"tracker_backend/src/presentation/rest_api/app/factory"
+	"tracker_backend/src/presentation/rest_api/task_controller"
 )
 
 type CreateFactory struct {

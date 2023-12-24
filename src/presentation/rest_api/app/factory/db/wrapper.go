@@ -2,7 +2,7 @@ package db
 
 import (
 	"tracker_backend/src/application/task"
-	"tracker_backend/src/presentation/rest/app/factory"
+	"tracker_backend/src/presentation/rest_api/app/factory"
 )
 
 type AbsDbGatewayFactory interface {

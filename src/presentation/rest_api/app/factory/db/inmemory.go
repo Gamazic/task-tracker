@@ -2,7 +2,7 @@ package db
 
 import (
 	"tracker_backend/src/adapter/inmemory"
-	"tracker_backend/src/presentation/rest/app/factory"
+	"tracker_backend/src/presentation/rest_api/app/factory"
 )
 
 type InMemoryFactory struct {
