@@ -2,7 +2,7 @@ package db
 
 import (
 	"database/sql"
-	"tracker_backend/src/adapter/pg"
+	"tracker_backend/src/adapter/task_repo"
 	"tracker_backend/src/presentation/rest_api/app/factory"
 )
 
@@ -14,7 +14,7 @@ type PgFactory struct {
 }
 
 func (m *PgFactory) Build(deps factory.CtxDeps) (DbGateway, error) {
-	return &pg.PgDbAdapter{
+	return &task_repo.PgDbAdapter{
 		TaskTable: m.TaskTable,
 		ConnPool:  m.ConnPool,
 		Ctx:       deps.Ctx,

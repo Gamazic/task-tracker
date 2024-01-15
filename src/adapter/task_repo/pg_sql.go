@@ -1,4 +1,4 @@
-package pg
+package task_repo
 
 import (
 	"context"

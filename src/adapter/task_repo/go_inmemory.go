@@ -1,4 +1,4 @@
-package inmemory
+package task_repo
 
 import (
 	"sync"
