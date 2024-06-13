@@ -39,6 +39,25 @@ Run a web application
 go run ./src/cmd/rest_api
 ```
 
+### Project summary
+
+```shell
+├── src - source code root
+│    ├── application - applied logic of the service, including usecases and required interfaces
+│    ├── cmd - entrypoints
+│    ├── domain - domain entities
+│    ├── storage_adapter - data-related implementations of interfaces that are required by applied logic layer
+│    └── transport
+│        └── rest_api
+│            ├── app
+│            │    ├── app.go
+│            │    └── factory
+│            ├── microframework
+└── swagger
+    ├── openapi.json - openapi specification rendering by swagger.
+    ├── ... - the rest of the files are permanent immutable and need to render swagger from openapi.json. 
+```
+
 ### HTTP Api
 
 #### Swagger
